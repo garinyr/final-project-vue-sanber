@@ -8,6 +8,12 @@
           indeterminate
         ></v-progress-linear>
       </template>
+      <div class="pt-2">
+        <v-btn small text @click="$router.go(-1)" class="blue--text">
+          <v-icon>mdi-arrow-left</v-icon>
+          Kembali
+        </v-btn>
+      </div>
 
       <v-card-title>Edit Blog</v-card-title>
 
@@ -38,7 +44,7 @@
 
       <v-card-actions>
         <v-btn color="primary lighten-2" text @click="update"> Update </v-btn>
-        <v-btn color="warning lighten-2" text> Reset </v-btn>
+        <v-btn color="warning lighten-2" text @click="go"> Reset </v-btn>
       </v-card-actions>
     </v-card>
   </v-container>

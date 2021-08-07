@@ -8,6 +8,12 @@
           indeterminate
         ></v-progress-linear>
       </template>
+      <div class="pt-2">
+        <v-btn small text @click="$router.go(-1)" class="blue--text">
+          <v-icon>mdi-arrow-left</v-icon>
+          Kembali
+        </v-btn>
+      </div>
 
       <v-card-title>Tambah Blog</v-card-title>
 
