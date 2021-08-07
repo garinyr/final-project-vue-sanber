@@ -119,7 +119,7 @@ export default {
     menus:[
       {title:'Home', icon: 'mdi-home', route:'/'},
       {title:'Blogs', icon: 'mdi-note', route:'/blogs'},
-      {title:'About',icon:'mdi-pentagon',route:'/about'},
+      // {title:'About',icon:'mdi-pentagon',route:'/about'},
     ],
     apiDomain : "https://demo-api-vue.sanbercloud.com",
   }),
