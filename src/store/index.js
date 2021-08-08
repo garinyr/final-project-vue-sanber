@@ -1,5 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import alert from "./alert";
+import dialog from "./dialog";
+import auth from "./auth";
 
 import VuexPersist from "vuex-persist";
 
@@ -12,5 +15,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   plugins: [vuexPersist.plugin],
-  modules: {},
+  modules: {
+    alert,
+    dialog,
+    auth,
+  },
 });
