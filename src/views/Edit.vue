@@ -44,20 +44,19 @@
 
       <v-card-actions>
         <v-btn color="primary lighten-2" text @click="update"> Update </v-btn>
-        <v-btn color="warning lighten-2" text @click="go"> Reset </v-btn>
+        <v-btn color="warning lighten-2" text @click="getBlog"> Reset </v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data: () => ({
     apiDomain: "https://demo-api-vue.sanbercloud.com",
     blog: [],
-    email: "mubarok.iqbal@gmail.com",
-    password: "sanbercode",
-    setToken: "",
     id: null,
     title: "",
     description: "",
@@ -65,7 +64,7 @@ export default {
   }),
 
   methods: {
-    go() {
+    getBlog() {
       let { id } = this.$route.params;
 
       const config = {
@@ -86,26 +85,7 @@ export default {
           console.log(error);
         });
     },
-    getUser() {
-      const config = {
-        method: "post",
-        url: this.apiDomain + "/api/v2/auth/login",
-        data: {
-          email: this.email,
-          password: this.password,
-        },
-      };
 
-      this.axios(config)
-        .then((response) => {
-          this.setToken = response.data.access_token;
-          console.log("getToken-blog");
-          console.log(this.setToken);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     update() {
       let data = {
         title: this.title,
@@ -115,25 +95,62 @@ export default {
       const config = {
         method: "put",
         url: `${this.apiDomain}/api/v2/blog/${this.id}`,
-        headers: { Authorization: `Bearer ${this.setToken}` },
+        headers: { Authorization: `Bearer ${this.token}` },
         data: data,
       };
       this.axios(config)
-        .then((response) => {
+        .then(() => {
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: "Blog berhasil diupdate.",
+          });
           this.loading = false;
-          console.log(response.data);
-          alert(response.data.message);
 
           this.$router.replace(`/blog/${this.id}`);
         })
         .catch((error) => {
+          this.setAlert({
+            status: true,
+            color: "error",
+            text: "Blog gagal diupdate.",
+          });
           console.log(error);
         });
     },
+
+    ...mapActions({
+      setAlert: "alert/set",
+      setDialogComponent: "dialog/setComponent",
+      setToken: "auth/setToken",
+      setUser: "auth/setUser",
+      checkToken: "auth/checkToken",
+    }),
   },
+
+  computed: {
+    ...mapGetters({
+      guest: "auth/guest",
+      user: "auth/user",
+      token: "auth/token",
+    }),
+  },
+
   created() {
-    this.go();
-    this.getUser();
+    if (this.guest == true) {
+      this.setAlert({
+        status: true,
+        color: "error",
+        text: "Anda tidak punya akses, login terlebih dahulu.",
+      });
+
+      this.$router.replace(`/`);
+    } else {
+      if (this.token) {
+        this.checkToken(this.token);
+        this.getBlog();
+      }
+    }
   },
 };
 </script>

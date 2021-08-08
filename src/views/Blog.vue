@@ -43,7 +43,7 @@ export default {
   }),
 
   methods: {
-    go() {
+    getBlog() {
       let { id } = this.$route.params;
 
       const config = {
@@ -60,30 +60,9 @@ export default {
           console.log(error);
         });
     },
-    getUser() {
-      const config = {
-        method: "post",
-        url: this.apiDomain + "/api/v2/auth/login",
-        data: {
-          email: this.email,
-          password: this.password,
-        },
-      };
-
-      this.axios(config)
-        .then((response) => {
-          this.setToken = response.data.access_token;
-          console.log("getToken-blog");
-          console.log(this.setToken);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
   created() {
-    this.go();
-    this.getUser();
+    this.getBlog();
   },
 };
 </script>

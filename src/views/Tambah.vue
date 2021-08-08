@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data: () => ({
     apiDomain: "https://demo-api-vue.sanbercloud.com",
@@ -56,33 +58,9 @@ export default {
     title: "",
     description: "",
     loading: false,
-    email: "mubarok.iqbal@gmail.com",
-    password: "sanbercode",
-    setToken: "",
   }),
 
   methods: {
-    go() {
-      const config = {
-        method: "post",
-        url: this.apiDomain + "/api/v2/auth/login",
-        data: {
-          email: this.email,
-          password: this.password,
-        },
-      };
-
-      this.axios(config)
-        .then((response) => {
-          this.setToken = response.data.access_token;
-          console.log("getToken");
-          console.log(this.setToken);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-
     tambah() {
       this.loading = true;
 
@@ -94,19 +72,28 @@ export default {
       const config = {
         method: "post",
         url: this.apiDomain + "/api/v2/blog",
-        headers: { Authorization: `Bearer ${this.setToken}` },
+        headers: { Authorization: `Bearer ${this.token}` },
         data: data,
       };
       this.axios(config)
-        .then((response) => {
-          this.loading = false;
-          console.log(response.data);
-          alert(response.data.message);
+        .then(() => {
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: "Blog berhasil disimpan.",
+          });
 
-          this.$router.replace("/");
+          this.loading = false;
+
+          this.$router.go(-1);
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.setAlert({
+            status: true,
+            color: "error",
+            text: "Blog gagal disimpan.",
+          });
+          this.loading = false;
         });
     },
 
@@ -114,9 +101,36 @@ export default {
       this.title = "";
       this.description = "";
     },
+
+    ...mapActions({
+      setAlert: "alert/set",
+      setDialogComponent: "dialog/setComponent",
+      setToken: "auth/setToken",
+      setUser: "auth/setUser",
+      checkToken: "auth/checkToken",
+    }),
+  },
+  computed: {
+    ...mapGetters({
+      guest: "auth/guest",
+      user: "auth/user",
+      token: "auth/token",
+    }),
   },
   created() {
-    this.go();
+    if (this.guest == true) {
+      this.setAlert({
+        status: true,
+        color: "error",
+        text: "Anda tidak punya akses, login terlebih dahulu.",
+      });
+
+      this.$router.replace(`/`);
+    } else {
+      if (this.token) {
+        this.checkToken(this.token);
+      }
+    }
   },
 };
 </script>
