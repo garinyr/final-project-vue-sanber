@@ -28,16 +28,38 @@
           {{ blog.description }}
         </v-card-text>
         <div v-if="!guest">
-          <input type="file" name="photo" ref="photo" /><br />
-          <v-btn color="blue lighten-1" dark @click="submitPhoto(blog.id)">
-            <v-icon left>mdi-check-circle</v-icon>
-            Upload Photo
-          </v-btn>
-          ||
-          <v-btn color="red lighten-1" dark @click="deleteblog">
-            <v-icon left>mdi-file-excel-box</v-icon>
-            DELETE
-          </v-btn>
+          <!-- <input type="file" name="photo" ref="photo" /><br /> -->
+          <div class="col-4">
+            <v-file-input
+              v-model="photo"
+              placeholder="Upload Photo"
+              label="File input"
+              multiple
+              prepend-icon="mdi-paperclip"
+            >
+              <template v-slot:selection="{ text }">
+                <v-chip small label color="primary">
+                  {{ text }}
+                </v-chip>
+              </template>
+            </v-file-input>
+          </div>
+          <div class="pl-4 pb-4">
+            <v-btn
+              class="mr-4"
+              color="blue lighten-1"
+              dark
+              @click="submitPhoto(blog.id)"
+            >
+              <v-icon left>mdi-check-circle</v-icon>
+              Upload Photo
+            </v-btn>
+
+            <v-btn color="red lighten-1" dark @click="deleteblog">
+              <v-icon left>mdi-file-excel-box</v-icon>
+              DELETE
+            </v-btn>
+          </div>
         </div>
       </v-card>
     </div>
@@ -50,9 +72,7 @@ export default {
   data: () => ({
     apiDomain: "https://demo-api-vue.sanbercloud.com",
     blog: [],
-    email: "mubarok.iqbal@gmail.com",
-    password: "sanbercode",
-    setToken: "",
+    photo: [],
   }),
 
   methods: {
@@ -75,10 +95,15 @@ export default {
     },
     ...mapActions({
       setAlert: "alert/set",
+      setProgress: "progress/set",
+      setDialogComponent: "dialog/setComponent",
+      setToken: "auth/setToken",
+      setUser: "auth/setUser",
+      checkToken: "auth/checkToken",
     }),
-    deleteblog: function() {
-      console.log(this.blog.id);
-      if (confirm("Hapus Post Ini?")) {
+
+    deleteblog: function () {
+      if (confirm("Hapus post Ini?")) {
         const config = {
           method: "post",
           url: `${this.apiDomain}/api/v2/blog/${this.blog.id}`,
@@ -94,7 +119,7 @@ export default {
             this.setAlert({
               status: true,
               color: "success",
-              text: "Anda Berhasil Menghapus Blog",
+              text: "Anda berhasil menghapus post",
             });
             window.history.back();
           })
@@ -103,37 +128,48 @@ export default {
             this.setAlert({
               status: true,
               color: "error",
-              text: "Anda Gagal Menghapus Blog",
+              text: "Anda gagal menghapus post",
             });
           });
       }
     },
-    submitPhoto: function(id) {
-      let file = this.$refs.photo.files[0];
 
+    submitPhoto: function (id) {
       let formData = new FormData();
-      formData.append("photo", file);
+      formData.append("photo", this.photo[0]);
 
       let config = {
         method: "post",
-        url: `http://demo-api-vue.sanbercloud.com/api/v2/blog/${id}/upload-photo`,
-        data: formData,
+        url: `${this.apiDomain}/api/v2/blog/${id}/upload-photo`,
         headers: {
           Authorization: "Bearer " + this.token,
         },
+        data: formData,
       };
 
       this.axios(config)
         .then((response) => {
           alert(response.data.message);
+          console.log(response.data.message);
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: "Anda berhasil upload photo",
+          });
+          this.$router.go();
         })
         .catch((error) => {
           console.log(error);
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: "Anda gagal upload photo",
+          });
         });
     },
   },
   computed: {
-    getBlogs: function() {
+    getBlogs: function () {
       if (JSON.stringify(this.blog) === "{}") {
         return false;
       } else {
@@ -146,7 +182,20 @@ export default {
     }),
   },
   created() {
-    this.getBlog();
+    if (this.guest == true) {
+      this.setAlert({
+        status: true,
+        color: "error",
+        text: "Anda tidak punya akses, login terlebih dahulu.",
+      });
+
+      this.$router.replace(`/`);
+    } else {
+      if (this.token) {
+        this.checkToken(this.token);
+        this.getBlog();
+      }
+    }
   },
 };
 </script>
