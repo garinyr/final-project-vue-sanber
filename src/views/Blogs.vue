@@ -1,7 +1,7 @@
 <template>
   <v-container class="ma-0 pa-0" grid-list-lg>
     <v-subheader> All Blogs </v-subheader>
-    <div class="float text-right mb-2">
+    <div class="float text-left mb-2">
       <v-btn small text to="/tambah" class="blue--text">
         <v-icon>mdi-book-edit-outline</v-icon>
         Tambah

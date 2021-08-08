@@ -88,7 +88,7 @@ export default {
     drawer: true,
     links: [
       { title: "Home", icon: "mdi-home", route: "/" },
-      { title: "About", icon: "mdi-account-group", route: "/about" },
+      { title: "Profile", icon: "mdi-card-account-details", route: "/profile" },
       { title: "Blogs", icon: "mdi-post", route: "/blogs" },
     ],
     apiDomain: "https://demo-api-vue.sanbercloud.com",
