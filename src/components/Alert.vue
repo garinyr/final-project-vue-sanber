@@ -5,6 +5,7 @@
     bottom
     timeout="3000"
     multi-line
+    shaped
     outlined
   >
     {{ text }}

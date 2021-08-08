@@ -37,7 +37,7 @@
       <v-list class="pa-2" v-if="guest">
         <v-btn
           elevation="2"
-          color="success"
+          color="teal white--text"
           class="mb-2"
           @click="login"
           rounded
@@ -46,7 +46,7 @@
           <v-icon left>mdi-lock</v-icon>
           Login
         </v-btn>
-        <v-btn color="primary" rounded block>
+        <v-btn color="deep-purple white--text" @click="register" rounded block>
           <v-icon left>mdi-account</v-icon>
           Register
         </v-btn>
@@ -100,6 +100,9 @@ export default {
   methods: {
     login() {
       this.setDialogComponent({ component: "login" });
+    },
+    register() {
+      this.setDialogComponent({ component: "register" });
     },
     logout() {
       const config = {

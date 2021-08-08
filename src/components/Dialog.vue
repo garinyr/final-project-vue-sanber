@@ -2,10 +2,8 @@
   <keep-alive>
     <v-dialog
       v-model="dialog"
-      fullscreen
-      hide-overlay
-      persistent
-      transition="dialog-bottom-transition"
+      transition="dialog-top-transition"
+      max-width="600"
     >
       <component :is="currentComponent" @closed="setDialogStatus"></component>
     </v-dialog>
@@ -18,6 +16,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   components: {
     Login: () => import("./Login.vue"),
+    Register: () => import("./Register.vue"),
   },
   computed: {
     ...mapGetters({
