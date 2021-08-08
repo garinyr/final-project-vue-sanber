@@ -80,7 +80,7 @@ export default {
           this.setAlert({
             status: true,
             color: "success",
-            text: "Blog berhasil disimpan.",
+            text: "Anda Berhasil Menambahkan Post di Blog",
           });
 
           this.loading = false;
@@ -91,7 +91,7 @@ export default {
           this.setAlert({
             status: true,
             color: "error",
-            text: "Blog gagal disimpan.",
+            text: "Anda Gagal Menambahkan Post di Blog",
           });
           this.loading = false;
         });
@@ -134,4 +134,3 @@ export default {
   },
 };
 </script>
-
