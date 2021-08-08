@@ -27,7 +27,12 @@
         <v-btn color="primary lighten-2" text :to="`/blog/${blog.id}`">
           Detail
         </v-btn>
-        <v-btn color="warning lighten-2" text :to="`/blog/edit/${blog.id}`">
+        <v-btn
+          color="warning lighten-2"
+          text
+          :to="`/blog/edit/${blog.id}`"
+          v-if="!guest"
+        >
           Edit
         </v-btn>
       </v-card-actions>
@@ -36,10 +41,17 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data: () => ({
     apiDomain: "https://demo-api-vue.sanbercloud.com",
   }),
   props: ["blog"],
+  computed: {
+    ...mapGetters({
+      guest: "auth/guest",
+    }),
+  },
 };
 </script>

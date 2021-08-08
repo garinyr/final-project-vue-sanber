@@ -1,7 +1,7 @@
 <template>
   <v-container class="ma-0 pa-0" grid-list-lg>
     <div>
-      <div class="float-left">
+      <div class="float-left" v-if="!guest">
         <v-btn small text to="/tambah" class="blue--text">
           <v-icon>mdi-book-edit-outline</v-icon>
           Tambah
@@ -25,6 +25,7 @@
 
 <script>
 import BlogItemComponent from "../components/BlogItemComponent.vue";
+import { mapGetters } from "vuex";
 
 export default {
   data: () => ({
@@ -36,7 +37,11 @@ export default {
     "blog-item-component": BlogItemComponent,
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters({
+      guest: "auth/guest",
+    }),
+  },
 
   methods: {
     go() {

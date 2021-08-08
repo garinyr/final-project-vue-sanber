@@ -1,16 +1,22 @@
 <template>
   <v-app id="inspire">
+    <Alert />
+    <Dialog />
+
     <v-navigation-drawer v-model="drawer" app>
-      <!--  -->
       <v-list v-if="!guest">
         <v-sheet color="grey lighten-4" class="pa-4">
           <v-avatar class="mb-4" color="grey darken-1" size="64">
             <v-img
-              :src="'https://randomuser.me/api/portraits/men/78.jpg'"
+              :src="
+                user.photo_profile
+                  ? apiDomain + user.photo_profile
+                  : 'https://randomuser.me/api/portraits/men/78.jpg'
+              "
             ></v-img>
           </v-avatar>
 
-          <div>john@vuetifyjs.com</div>
+          <div>{{ user.name }}</div>
         </v-sheet>
         <v-list-item
           v-for="(item, index) in links"
@@ -26,6 +32,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
       <v-divider></v-divider>
       <v-list class="pa-2" v-if="guest">
         <v-btn
@@ -56,7 +63,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>Application</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -74,24 +81,72 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data: () => ({
-    drawer: null,
+    drawer: true,
     links: [
       { title: "Home", icon: "mdi-home", route: "/" },
       { title: "About", icon: "mdi-account-group", route: "/about" },
       { title: "Blogs", icon: "mdi-post", route: "/blogs" },
     ],
-    guest: false,
+    apiDomain: "https://demo-api-vue.sanbercloud.com",
   }),
+  components: {
+    Alert: () => import("./components/Alert.vue"),
+    Dialog: () => import("./components/Dialog.vue"),
+  },
   methods: {
     login() {
-      this.guest = !this.guest;
+      this.setDialogComponent({ component: "login" });
     },
-
     logout() {
-      this.guest = !this.guest;
+      const config = {
+        method: "post",
+        url: this.apiDomain + "/api/v2/auth/logout",
+        headers: {
+          Authorization: "Bearer" + this.token,
+        },
+      };
+      this.axios(config)
+        .then(() => {
+          this.setToken("");
+          this.setUser({});
+
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: "Anda berhasil logout",
+          });
+        })
+        .catch((response) => {
+          this.setAlert({
+            status: true,
+            color: "success",
+            text: response.data.error,
+          });
+        });
     },
+    ...mapActions({
+      setAlert: "alert/set",
+      setDialogComponent: "dialog/setComponent",
+      setToken: "auth/setToken",
+      setUser: "auth/setUser",
+      checkToken: "auth/checkToken",
+    }),
+  },
+  computed: {
+    ...mapGetters({
+      guest: "auth/guest",
+      user: "auth/user",
+      token: "auth/token",
+    }),
+  },
+  mounted() {
+    if (this.token) {
+      this.checkToken(this.token);
+    }
   },
 };
 </script>
