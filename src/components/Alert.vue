@@ -2,8 +2,8 @@
   <v-snackbar
     v-model="alert"
     :color="color"
-    bottom
-    timeout="3000"
+    top
+    timeout="4000"
     multi-line
     shaped
     outlined

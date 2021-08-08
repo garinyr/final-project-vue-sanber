@@ -1,4 +1,4 @@
-# final_project_vue_sanber
+# blog-project
 
 ## Project setup
 ```
